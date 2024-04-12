@@ -2,6 +2,7 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import okhttp3.FormBody
 import okhttp3.RequestBody
 import okhttp3.ResponseBody
 import retrofit2.Call
@@ -16,33 +17,47 @@ class PoemBookmarksReadViewModel : ViewModel() {
   fun getArticle() {
     Retrofit.Builder().baseUrl(jsonplaceURL).build().create(IApiStores::class.java).getArticle(2)
       ?.enqueue(
-          object : Callback<ResponseBody?> {
-              override fun onResponse(
-                  call: Call<ResponseBody?>,
-                  response: Response<ResponseBody?>
-              ) {
-                Log.i("PoemBookmarksReadViewModel", "onResponse: ${response.body()}")
-              }
+        object : Callback<ResponseBody?> {
+          override fun onResponse(
+            call: Call<ResponseBody?>,
+            response: Response<ResponseBody?>,
+          ) {
+            val body = response.body()?.string()
 
-              override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
-              }
-          },
+            Log.i("PoemBookmarksReadViewModel", "onResponse: $body")
+          }
+
+          override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+          }
+        },
       )
+  }
 
 
-//    RetrofitFactory.create(
-//      IApiStores::class.java
-//    ).getArticle(2).enqueue(
-//      object : Callback<ResponseBody> {
-//        override fun onResponse(
-//          call: Call<ResponseBody>,
-//          response: Response<ResponseBody>,
-//        ) {
-//          Log.i(TAG, "onResponse: ${response.body()}")
-//        }
-//
-//        override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {}
-//      })
+  fun addArticle() {
+
+    val formBody = FormBody.Builder()
+      .add("userId", "1")
+      .add("title", "article 2")
+      .add("body", "body article")
+      .build()
+    Retrofit.Builder().baseUrl(jsonplaceURL).build().create(IApiStores::class.java)
+      .addArticle(formBody)
+      ?.enqueue(
+        object : Callback<ResponseBody?> {
+          override fun onResponse(
+            call: Call<ResponseBody?>,
+            response: Response<ResponseBody?>,
+          ) {
+            val body = response.body()?.string()
+
+            Log.i("PoemBookmarksReadViewModel", "onResponse: $body")
+          }
+
+          override fun onFailure(call: Call<ResponseBody?>, t: Throwable) {
+          }
+        },
+      )
   }
 
 }
@@ -51,11 +66,11 @@ class PoemBookmarksReadViewModel : ViewModel() {
 interface IApiStores {
 
   @GET("posts/{articleId}")
-  fun getArticle(@retrofit2.http.Path("articleId") it: Int): retrofit2.Call<ResponseBody?>?
+  fun getArticle(@retrofit2.http.Path("articleId") it: Int): Call<ResponseBody?>?
 
 
   @POST("posts")
-  fun addArticle(@retrofit2.http.Body requestBody: RequestBody?): retrofit2.Call<ResponseBody?>?
+  fun addArticle(@retrofit2.http.Body requestBody: RequestBody?): Call<ResponseBody?>?
 }
 
 val jsonplaceURL = "https://jsonplaceholder.typicode.com/"

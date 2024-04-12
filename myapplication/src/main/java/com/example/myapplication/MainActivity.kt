@@ -53,6 +53,12 @@ fun jsonplaceholderArticle(
     }) {
       Text(text = "get Article")
     }
+
+    Button(onClick = {
+      viewModel.addArticle()
+    }) {
+      Text(text = "add Article")
+    }
   }
 }
 
