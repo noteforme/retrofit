@@ -47,3 +47,4 @@ include ':retrofit-converters:wire'
 include ':samples'
 
 enableFeaturePreview('TYPESAFE_PROJECT_ACCESSORS')
+include ':myapplication'
