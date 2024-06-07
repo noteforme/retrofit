@@ -14,6 +14,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myapplication.ui.theme.RetrofitrootTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
+import com.example.myapplication.coroutine.viewModel.MainViewModel
 
 
 class MainActivity : ComponentActivity() {
@@ -58,6 +59,17 @@ fun jsonplaceholderArticle(
       viewModel.addArticle()
     }) {
       Text(text = "add Article")
+    }
+
+    Button(onClick = {
+      viewModel.rxJavaInvoke()
+    }) {
+      Text(text = "auther contribute")
+    }
+    Button(onClick = {
+      MainViewModel().getArticle()
+    }) {
+      Text(text = "wan coroutine")
     }
   }
 }

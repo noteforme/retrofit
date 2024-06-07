@@ -1,8 +1,6 @@
 // Copyright 2013 Square, Inc.
 package com.example.retrofit;
 
-import com.example.retrofit.SimpleService.Contributor;
-import com.example.retrofit.SimpleService.GitHub;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -10,6 +8,9 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
+import com.example.retrofit.SimpleService.Contributor;
+import com.example.retrofit.SimpleService.GitHub;
 import retrofit2.Call;
 import retrofit2.Retrofit;
 import retrofit2.mock.BehaviorDelegate;
@@ -40,15 +41,15 @@ public final class SimpleMockService {
 
     @Override
     public Call<List<Contributor>> contributors(String owner, String repo) {
-      List<Contributor> response = Collections.emptyList();
-      Map<String, List<Contributor>> repoContributors = ownerRepoContributors.get(owner);
-      if (repoContributors != null) {
-        List<Contributor> contributors = repoContributors.get(repo);
-        if (contributors != null) {
-          response = contributors;
-        }
-      }
-      return delegate.returningResponse(response).contributors(owner, repo);
+      //List<Contributor> response = Collections.emptyList();
+      //Map<String, List<Contributor>> repoContributors = ownerRepoContributors.get(owner);
+      //if (repoContributors != null) {
+      //  List<Contributor> contributors = repoContributors.get(repo);
+      //  if (contributors != null) {
+      //    response = contributors;
+      //  }
+      //}
+      return delegate.returningResponse(null).contributors(owner, repo);
     }
 
     void addContributor(String owner, String repo, String name, int contributions) {
@@ -64,6 +65,7 @@ public final class SimpleMockService {
       }
       contributors.add(new Contributor(name, contributions));
     }
+
   }
 
   public static void main(String... args) throws IOException {

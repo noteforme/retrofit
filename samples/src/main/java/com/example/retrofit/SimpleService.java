@@ -17,11 +17,19 @@ package com.example.retrofit;
 
 import java.io.IOException;
 import java.util.List;
+
 import retrofit2.Call;
+import retrofit2.Callback;
+import retrofit2.Response;
 import retrofit2.Retrofit;
+import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
 import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
+import rx.Observable;
+import rx.Observable.OnSubscribe;
+import rx.Subscriber;
+import rx.schedulers.Schedulers;
 
 public final class SimpleService {
   public static final String API_URL = "https://api.github.com";
@@ -41,24 +49,87 @@ public final class SimpleService {
     Call<List<Contributor>> contributors(@Path("owner") String owner, @Path("repo") String repo);
   }
 
+  public interface IGitHub {
+    @GET("/repos/{owner}/{repo}/contributors")
+    Call<List<Contributor>> contributors(@Path("owner") String owner, @Path("repo") String repo);
+
+    @GET("/repos/{owner}/{repo}/contributors")
+    Observable<List<Contributor>> contributorsOwner(@Path("owner") String owner,
+                                                    @Path("repo") String repo);
+  }
+
   public static void main(String... args) throws IOException {
+    //defaultInvoke();
+
+    rxJavaInvoke();
+  }
+
+  private static void rxJavaInvoke() {
     // Create a very simple REST adapter which points the GitHub API.
     Retrofit retrofit =
-        new Retrofit.Builder()
-            .baseUrl(API_URL)
-            .addConverterFactory(GsonConverterFactory.create())
-            .build();
+      new Retrofit.Builder()
+        .baseUrl(API_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .addCallAdapterFactory(RxJavaCallAdapterFactory.create())
+        .build();
 
     // Create an instance of our GitHub API interface.
-    GitHub github = retrofit.create(GitHub.class);
+    IGitHub github = retrofit.create(IGitHub.class);
 
     // Create a call instance for looking up Retrofit contributors.
-    Call<List<Contributor>> call = github.contributors("square", "retrofit");
+    github.contributorsOwner("square", "retrofit")
+      .subscribeOn(Schedulers.io())
+      .subscribe(new Subscriber<List<Contributor>>() {
+        @Override
+        public void onCompleted() {
+        }
 
-    // Fetch and print a list of the contributors to the library.
-    List<Contributor> contributors = call.execute().body();
-    for (Contributor contributor : contributors) {
-      System.out.println(contributor.login + " (" + contributor.contributions + ")");
-    }
+        @Override
+        public void onError(Throwable e) {
+          System.out.println(e);
+        }
+
+        @Override
+        public void onNext(List<Contributor> contributors) {
+          for (Contributor contributor : contributors) {
+            System.out.println(contributor.login + " (" + contributor.contributions + ")");
+          }
+        }
+      });
+
   }
+
+  /**
+   * ff
+   */
+  //private static void defaultInvoke() {
+  //  // Create a very simple REST adapter which points the GitHub API.
+  //  Retrofit retrofit =
+  //    new Retrofit.Builder()
+  //      .baseUrl(API_URL)
+  //      .addConverterFactory(GsonConverterFactory.create())
+  //      .build();
+  //
+  //  // Create an instance of our GitHub API interface.
+  //  IGitHub github = retrofit.create(IGitHub.class);
+  //
+  //  // Create a call instance for looking up Retrofit contributors.
+  //  Call<List<Contributor>> call = github.contributors("square", "retrofit");
+  //
+  //  call.enqueue(new Callback<List<Contributor>>() {
+  //    @Override
+  //    public void onResponse(Call<List<Contributor>> call, Response<List<Contributor>> response) {
+  //      List<Contributor> contributors = response.body();
+  //      for (Contributor contributor : contributors) {
+  //        System.out.println(contributor.login + " (" + contributor.contributions + ")");
+  //      }
+  //    }
+  //
+  //    @Override
+  //    public void onFailure(Call<List<Contributor>> call, Throwable t) {
+  //
+  //    }
+  //  });
+  //
+  //}
 }
