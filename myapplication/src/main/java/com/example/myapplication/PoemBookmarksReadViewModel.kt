@@ -1,9 +1,13 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.util.Log
 import androidx.lifecycle.ViewModel
 import androidx.lifecycle.viewModelScope
 import com.example.myapplication.ui.theme.Contributor
+import java.io.File
+import java.io.FileOutputStream
+import java.io.IOException
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
@@ -154,7 +158,7 @@ class PoemBookmarksReadViewModel : ViewModel() {
   }
 
 
-  fun coroutineContributorsOwner() {
+  fun coroutineContributorsOwner(context: Context) {
     viewModelScope.launch {
       // Create a very simple REST adapter which points the GitHub API.
 
@@ -179,7 +183,6 @@ class PoemBookmarksReadViewModel : ViewModel() {
           ) {
 
             val list = response.body()
-
             Log.i(TAG, "coroutineContributorsOwner: ${list}")
           }
 
@@ -187,6 +190,12 @@ class PoemBookmarksReadViewModel : ViewModel() {
           }
         },
       )
+
+      // Get the proxy class name
+//      val proxyClassName = IApiStores::class.java.name
+//      println("Proxy class name: $proxyClassName")
+//      writeToFile(context, proxyClassName)
+//      ProxyGenerator.generateProxyClass(context,IApiStores::class.java)
     }
 
   }
@@ -218,3 +227,22 @@ interface IApiStores {
 }
 
 val jsonplaceURL = "https://jsonplaceholder.typicoe.com/"
+
+
+private fun writeToFile(context: Context, data: String) {
+
+//  val classFile= ProxyGenerator.generateProxyClass(IApiStores::class.java)
+//
+//  try {
+//    // Create or open the file
+//    val file = File(context.externalCacheDir, "proxy_class_name.java")
+//    FileOutputStream(file).use { fos ->
+//      fos.write(classFile)
+//    }
+//
+//    println("File written successfully  ${file.path}")
+//  } catch (e: IOException) {
+//    e.printStackTrace()
+//    println("Error writing to file: ${e.message}")
+//  }
+}

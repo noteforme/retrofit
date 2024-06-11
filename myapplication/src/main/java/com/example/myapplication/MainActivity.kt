@@ -1,5 +1,6 @@
 package com.example.myapplication
 
+import android.content.Context
 import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -11,6 +12,7 @@ import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.tooling.preview.Preview
 import com.example.myapplication.ui.theme.RetrofitrootTheme
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -18,6 +20,7 @@ import com.example.myapplication.coroutine.viewModel.MainViewModel
 
 
 class MainActivity : ComponentActivity() {
+
   override fun onCreate(savedInstanceState: Bundle?) {
     super.onCreate(savedInstanceState)
     setContent {
@@ -27,12 +30,14 @@ class MainActivity : ComponentActivity() {
             modifier = Modifier.fillMaxSize(),
             color = MaterialTheme.colorScheme.background,
         ) {
-          jsonplaceholderArticle()
+          jsonplaceholderArticle(this)
         }
       }
     }
   }
 }
+
+
 
 @Composable
 fun Greeting(name: String, modifier: Modifier = Modifier) {
@@ -44,7 +49,7 @@ fun Greeting(name: String, modifier: Modifier = Modifier) {
 
 
 @Composable
-fun jsonplaceholderArticle(
+fun jsonplaceholderArticle(context: Context,
   modifier: Modifier = Modifier,
   viewModel: PoemBookmarksReadViewModel = viewModel()
 ) {
@@ -67,7 +72,7 @@ fun jsonplaceholderArticle(
       Text(text = "rxJavaContributorsOwner")
     }
     Button(onClick = {
-      viewModel.coroutineContributorsOwner()
+      viewModel.coroutineContributorsOwner(context)
     }) {
       Text(text = "coroutineContributorsOwner")
     }
