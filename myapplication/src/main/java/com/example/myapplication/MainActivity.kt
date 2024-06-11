@@ -62,9 +62,14 @@ fun jsonplaceholderArticle(
     }
 
     Button(onClick = {
-      viewModel.rxJavaInvoke()
+      viewModel.rxJavaContributorsOwner()
     }) {
-      Text(text = "auther contribute")
+      Text(text = "rxJavaContributorsOwner")
+    }
+    Button(onClick = {
+      viewModel.coroutineContributorsOwner()
+    }) {
+      Text(text = "coroutineContributorsOwner")
     }
     Button(onClick = {
       MainViewModel().getArticle()

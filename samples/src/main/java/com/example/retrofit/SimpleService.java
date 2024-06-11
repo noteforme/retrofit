@@ -15,6 +15,8 @@
  */
 package com.example.retrofit;
 
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
@@ -30,6 +32,7 @@ import rx.Observable;
 import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
+import sun.misc.ProxyGenerator;
 
 public final class SimpleService {
   public static final String API_URL = "https://api.github.com";
@@ -59,12 +62,12 @@ public final class SimpleService {
   }
 
   public static void main(String... args) throws IOException {
-    //defaultInvoke();
+    defaultInvoke();
 
-    rxJavaInvoke();
+//    rxJavaInvoke();
   }
 
-  private static void rxJavaInvoke() {
+  void rxJavaInvoke() {
     // Create a very simple REST adapter which points the GitHub API.
     Retrofit retrofit =
       new Retrofit.Builder()
@@ -100,36 +103,47 @@ public final class SimpleService {
   }
 
   /**
-   * ff
+   * officer
    */
-  //private static void defaultInvoke() {
-  //  // Create a very simple REST adapter which points the GitHub API.
-  //  Retrofit retrofit =
-  //    new Retrofit.Builder()
-  //      .baseUrl(API_URL)
-  //      .addConverterFactory(GsonConverterFactory.create())
-  //      .build();
-  //
-  //  // Create an instance of our GitHub API interface.
-  //  IGitHub github = retrofit.create(IGitHub.class);
-  //
-  //  // Create a call instance for looking up Retrofit contributors.
-  //  Call<List<Contributor>> call = github.contributors("square", "retrofit");
-  //
-  //  call.enqueue(new Callback<List<Contributor>>() {
-  //    @Override
-  //    public void onResponse(Call<List<Contributor>> call, Response<List<Contributor>> response) {
-  //      List<Contributor> contributors = response.body();
-  //      for (Contributor contributor : contributors) {
-  //        System.out.println(contributor.login + " (" + contributor.contributions + ")");
-  //      }
-  //    }
-  //
-  //    @Override
-  //    public void onFailure(Call<List<Contributor>> call, Throwable t) {
-  //
-  //    }
-  //  });
-  //
-  //}
+  private static void defaultInvoke() {
+    // Create a very simple REST adapter which points the GitHub API.
+    Retrofit retrofit =
+      new Retrofit.Builder()
+        .baseUrl(API_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build();
+
+    // Create an instance of our GitHub API interface.
+    IGitHub github = retrofit.create(IGitHub.class);
+
+
+    // Create a call instance for looking up Retrofit contributors.
+    Call<List<Contributor>> call = github.contributors("square", "retrofit");
+    try {
+      Response<List<Contributor>> response = call.execute();
+      System.out.println("response " + response);
+    } catch (IOException e) {
+      throw new RuntimeException(e);
+    }
+
+
+
+//    call.enqueue(new Callback<List<Contributor>>() {
+//      @Override
+//      public void onResponse(Call<List<Contributor>> call, Response<List<Contributor>> response) {
+//        List<Contributor> contributors = response.body();
+//        for (Contributor contributor : contributors) {
+//          System.out.println(contributor.login + " (" + contributor.contributions + ")");
+//        }
+//      }
+//
+//      @Override
+//      public void onFailure(Call<List<Contributor>> call, Throwable t) {
+//
+//      }
+//    });
+  }
+
+
+
 }

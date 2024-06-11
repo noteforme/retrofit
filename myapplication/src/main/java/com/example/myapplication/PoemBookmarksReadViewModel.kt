@@ -2,11 +2,13 @@ package com.example.myapplication
 
 import android.util.Log
 import androidx.lifecycle.ViewModel
+import androidx.lifecycle.viewModelScope
 import com.example.myapplication.ui.theme.Contributor
 import javax.net.ssl.HostnameVerifier
 import javax.net.ssl.SSLContext
 import javax.net.ssl.TrustManager
 import javax.net.ssl.X509TrustManager
+import kotlinx.coroutines.launch
 import okhttp3.FormBody
 import okhttp3.OkHttpClient
 import okhttp3.RequestBody
@@ -34,7 +36,7 @@ const val API_URL = "https://api.github.com"
 
 class PoemBookmarksReadViewModel : ViewModel() {
 
-
+  val TAG = "PoemBookmarksReadViewModel"
   fun getArticle() {
     val call1 =
       Retrofit.Builder().baseUrl(jsonplaceURL).client(disableCertificateVerification()).build()
@@ -118,7 +120,7 @@ class PoemBookmarksReadViewModel : ViewModel() {
   }
 
 
-  fun rxJavaInvoke() {
+  fun rxJavaContributorsOwner() {
     // Create a very simple REST adapter which points the GitHub API.
     val retrofit: Retrofit = Retrofit.Builder()
       .baseUrl(API_URL)
@@ -151,6 +153,44 @@ class PoemBookmarksReadViewModel : ViewModel() {
       )
   }
 
+
+  fun coroutineContributorsOwner() {
+    viewModelScope.launch {
+      // Create a very simple REST adapter which points the GitHub API.
+
+      val retrofit: Retrofit = Retrofit.Builder()
+        .baseUrl(API_URL)
+        .addConverterFactory(GsonConverterFactory.create())
+        .build()
+
+      // Create an instance of our GitHub API interface.
+      val github = retrofit.create(IApiStores::class.java)
+
+      // Create a call instance for looking up Retrofit contributors.
+      val call = github.coroutineContributorsOwner("square", "retrofit")
+
+//      val response = call.execute() // 为什么这样执行不可以,还是在主线程
+
+      call.enqueue(
+        object : Callback<List<Contributor>> {
+          override fun onResponse(
+            call: Call<List<Contributor>>,
+            response: Response<List<Contributor>>,
+          ) {
+
+            val list = response.body()
+
+            Log.i(TAG, "coroutineContributorsOwner: ${list}")
+          }
+
+          override fun onFailure(call: Call<List<Contributor>>, t: Throwable) {
+          }
+        },
+      )
+    }
+
+  }
+
 }
 
 
@@ -168,6 +208,12 @@ interface IApiStores {
     @Path("owner") owner: String?,
     @Path("repo") repo: String?,
   ): Observable<List<Contributor?>?>
+
+  @GET("/repos/{owner}/{repo}/contributors")
+  fun coroutineContributorsOwner(
+    @Path("owner") owner: String?,
+    @Path("repo") repo: String?,
+  ): Call<List<Contributor>>
 
 }
 
