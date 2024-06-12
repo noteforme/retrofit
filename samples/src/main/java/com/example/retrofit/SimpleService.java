@@ -15,13 +15,10 @@
  */
 package com.example.retrofit;
 
-import java.io.FileNotFoundException;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.util.List;
 
 import retrofit2.Call;
-import retrofit2.Callback;
 import retrofit2.Response;
 import retrofit2.Retrofit;
 import retrofit2.adapter.rxjava.RxJavaCallAdapterFactory;
@@ -29,10 +26,8 @@ import retrofit2.converter.gson.GsonConverterFactory;
 import retrofit2.http.GET;
 import retrofit2.http.Path;
 import rx.Observable;
-import rx.Observable.OnSubscribe;
 import rx.Subscriber;
 import rx.schedulers.Schedulers;
-import sun.misc.ProxyGenerator;
 
 public final class SimpleService {
   public static final String API_URL = "https://api.github.com";
@@ -111,17 +106,18 @@ public final class SimpleService {
       new Retrofit.Builder()
         .baseUrl(API_URL)
         .addConverterFactory(GsonConverterFactory.create())
+//        .addConverterFactory(MoshiConverterFactory.create())
         .build();
 
     // Create an instance of our GitHub API interface.
     IGitHub github = retrofit.create(IGitHub.class);
 
-
     // Create a call instance for looking up Retrofit contributors.
     Call<List<Contributor>> call = github.contributors("square", "retrofit");
     try {
       Response<List<Contributor>> response = call.execute();
-      System.out.println("response " + response);
+      List<Contributor> body = response.body();
+      System.out.println("response " + body);
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

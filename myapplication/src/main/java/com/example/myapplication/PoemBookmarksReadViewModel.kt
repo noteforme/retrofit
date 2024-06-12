@@ -173,23 +173,23 @@ class PoemBookmarksReadViewModel : ViewModel() {
       // Create a call instance for looking up Retrofit contributors.
       val call = github.coroutineContributorsOwner("square", "retrofit")
 
-//      val response = call.execute() // 为什么这样执行不可以,还是在主线程
+      val response = call.execute() // 为什么这样执行不可以,还是在主线程
 
-      call.enqueue(
-        object : Callback<List<Contributor>> {
-          override fun onResponse(
-            call: Call<List<Contributor>>,
-            response: Response<List<Contributor>>,
-          ) {
-
-            val list = response.body()
-            Log.i(TAG, "coroutineContributorsOwner: ${list}")
-          }
-
-          override fun onFailure(call: Call<List<Contributor>>, t: Throwable) {
-          }
-        },
-      )
+//      call.enqueue(
+//        object : Callback<List<Contributor>> {
+//          override fun onResponse(
+//            call: Call<List<Contributor>>,
+//            response: Response<List<Contributor>>,
+//          ) {
+//
+//            val list = response.body()
+//            Log.i(TAG, "coroutineContributorsOwner: ${list}")
+//          }
+//
+//          override fun onFailure(call: Call<List<Contributor>>, t: Throwable) {
+//          }
+//        },
+//      )
 
       // Get the proxy class name
 //      val proxyClassName = IApiStores::class.java.name

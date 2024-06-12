@@ -11,4 +11,6 @@ dependencies {
   implementation libs.guava
   implementation libs.jsoup
   compileOnly libs.findBugsAnnotations
+  implementation projects.retrofitConverters.protobuf
+  implementation projects.retrofitConverters.wire
 }
