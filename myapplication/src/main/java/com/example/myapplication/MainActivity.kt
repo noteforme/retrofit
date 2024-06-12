@@ -33,6 +33,8 @@ class MainActivity : ComponentActivity() {
           jsonplaceholderArticle(this)
         }
       }
+
+
     }
   }
 }
